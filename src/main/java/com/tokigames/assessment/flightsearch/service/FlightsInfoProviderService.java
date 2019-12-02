@@ -1,5 +1,7 @@
 package com.tokigames.assessment.flightsearch.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import com.tokigames.assessment.flightsearch.model.EconomyFlights;
 @Service
 public class FlightsInfoProviderService {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FlightsInfoProviderService.class);
+	
 	@Value("${flight.info.provider.url}")
 	String flightInfoProviderUrl;
 	
@@ -33,6 +37,7 @@ public class FlightsInfoProviderService {
 	 * @throws FlightInfoProviderException
 	 */
 	public EconomyFlights getEconomyFlights() throws FlightInfoProviderException   {
+		LOGGER.info("::getEconomyFlights::");
 		EconomyFlights economyFlights = this.restTemplate.getForObject(flightInfoProviderUrl+"/"+FlightSearchAppConstant.FLIGHT_CLASS_CHEAP, EconomyFlights.class);
 		return economyFlights;
 	}
@@ -43,6 +48,7 @@ public class FlightsInfoProviderService {
 	 * @throws FlightInfoProviderException
 	 */
 	public BusinessFlights getBusinessFlights() throws FlightInfoProviderException {
+		LOGGER.info("::getBusinessFlights::");
 		BusinessFlights businessFlights = this.restTemplate.getForObject(flightInfoProviderUrl+"/"+FlightSearchAppConstant.FLIGHT_CLASS_BUSINESS, BusinessFlights.class);
 		return businessFlights;
 	}

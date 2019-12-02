@@ -39,16 +39,19 @@ public class FlightsSearchController {
 			 				 @PathVariable("source") String source, @PathVariable("destination") String destination, 
 			 				 @PathVariable("flightClass") String flightClass) {
 		 
-
+		 LOGGER.info("PARAMS : sort{"+sort+"} page{"+page+"} size{"+size+"} source{"+source+"} destination{"+destination+"} flightClass{"+flightClass+"}");
+		 
 		 if (!(sort.equals(Sorting.ASCENDING.getDirectionCode()) || sort.equals(Sorting.DESCENDING.getDirectionCode()))) {
 			 throw new FilteringException("Invalid sort direction");
 		 }
 		 
 		 if(source.equals("") || destination.equals("") || flightClass.equals("")) {
+			 LOGGER.error("missing Filtring values");
 			 throw new FilteringException("Invalid filtring values");
 		 }
 		 
 		 if(page <= 0 || size<= 0) {
+			 LOGGER.error("missing page/size values");
 			 throw new FilteringException("Invalid pagination parameters");
 		 }
 		 

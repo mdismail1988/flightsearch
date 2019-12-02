@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tokigames.assessment.flightsearch.FlightSerachApp;
 import com.tokigames.assessment.flightsearch.exception.FlightSearchException;
 import com.tokigames.assessment.flightsearch.model.BusinessClass;
 import com.tokigames.assessment.flightsearch.model.BusinessFlights;
@@ -28,6 +31,8 @@ import com.tokigames.assessment.flightsearch.util.Sorting;
 @Component
 public class FlightSearchManager {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FlightSerachApp.class);
+	
 	@Autowired
 	private FlightsInfoProviderService flightsInfoProviderService;
 	
@@ -43,6 +48,7 @@ public class FlightSearchManager {
 	 */
 	public List<EconomyClass> getAvailableFlights(String source,String destination,String sort,int page,int size,boolean returnSerach) {
 		try {
+			LOGGER.info("::getAvailableFlights::");
 			EconomyFlights economyFlights =  flightsInfoProviderService.getEconomyFlights();
 			
 			List<EconomyClass> availableFlights = economyFlights.getData().stream()
@@ -54,6 +60,7 @@ public class FlightSearchManager {
 			
 			if(!returnSerach) {
 				if(page != 1 && totalPage < page) {  // 
+					LOGGER.error("totalResults {"+totalResults+"}, totalPage{"+totalPage+"} requested page {"+page+"}");
 					throw new FlightSearchException("Given Page number exceeded total pages available");
 				}
 			}
@@ -65,6 +72,7 @@ public class FlightSearchManager {
 			}
 			return availableFlights;
 		}catch(Exception e) {
+			LOGGER.error("Error in getAvailableFlights ::"+e.getMessage());
 			throw new FlightSearchException(e.getMessage());
 		}
 		 
@@ -81,6 +89,7 @@ public class FlightSearchManager {
 	 */
 	public FlightSearchResult searchEconomyFlights(String source,String destination,String sort,int page,int size) {
 		try {
+			LOGGER.info("::searchEconomyFlights::");
 			List<EconomyClass> onwardFlights = getAvailableFlights(source, destination, sort, page, size,false);
 			List<EconomyClass> retrunFlights = new ArrayList<EconomyClass>();
 			
@@ -117,6 +126,7 @@ public class FlightSearchManager {
 			
 			return result;
 		}catch(Exception e) {
+			LOGGER.error("Error in searchEconomyFlights ::"+e.getMessage());
 			throw new FlightSearchException(e.getMessage());
 		}
 	}
@@ -132,6 +142,7 @@ public class FlightSearchManager {
 	 */
 	public FlightSearchResult searchBusinessFlights(String source,String destination,String sort,int page,int size) {
 		try {
+			LOGGER.info("::searchBusinessFlights::");
 			List<BusinessClass> onwardFlights = getAvailableBusinessClass(source, destination, sort, page, size, false);
 			List<BusinessClass> retrunFlights =  new ArrayList<BusinessClass>();
 			
@@ -166,6 +177,7 @@ public class FlightSearchManager {
 			result.setReturnFlights(returnFlightTimingList);
 			return result;
 		}catch(Exception e) {
+			LOGGER.error("Error in searchBusinessFlights ::"+e.getMessage());
 			throw new FlightSearchException(e.getMessage());
 		}
 	}
@@ -182,6 +194,7 @@ public class FlightSearchManager {
 	 */
 	public List<BusinessClass> getAvailableBusinessClass(String source,String destination,String sort,int page,int size,boolean returnSerach) {
 		try {
+			LOGGER.info("::getAvailableBusinessClass::");
 			BusinessFlights businessFlights = flightsInfoProviderService.getBusinessFlights();
 			
 			ListIterator<BusinessClass> litr = null;
@@ -207,6 +220,7 @@ public class FlightSearchManager {
 			}
 			return availableFlights;
 		}catch(Exception e) {
+			LOGGER.error("Error in getAvailableBusinessClass ::"+e.getMessage());
 			throw new FlightSearchException(e.getMessage());
 		}
 	}
